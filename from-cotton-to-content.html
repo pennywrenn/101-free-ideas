@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>From Cotton to Content</title>
+  <meta name="description" content="An interactive artifact tracing the evolution of unpaid American labor from the plantation economy to the platform economy.">
+
+  <!-- Provenance / DNA Token -->
+  <meta name="author" content="Penny Wrenn">
+  <meta name="corpus-id" content="PW-C2C-2022-ORIGIN">
+  <meta name="original-url" content="https://pennywrenn.media/cotton-to-content">
+  <meta name="date-first-recorded" content="2022">
+  <meta name="ip-claimed" content="2025-02-24">
+  <link rel="canonical" href="https://pennywrenn.media/cotton-to-content">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": "From Cotton to Content",
+    "author": {"@type": "Person", "name": "Penny Wrenn"},
+    "dateCreated": "2022",
+    "copyrightHolder": {"@type": "Person", "name": "Penny Wrenn"},
+    "identifier": "PW-C2C-2022-ORIGIN",
+    "description": "An interactive artifact tracing the evolution of unpaid American labor from the plantation economy to the platform economy."
+  }
+  </script>
+
+  <style>
+    /* ============================================================
+       RESET
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ============================================================
+       CHAPTER FRAME
+    ============================================================ */
+    .chapter {
+      display: none;
+      min-height: 100vh;
+      position: relative;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .chapter.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chapter.visible {
+      opacity: 1;
+    }
+
+    /* ============================================================
+       ACT LABEL — top right
+    ============================================================ */
+    .act-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-family: system-ui, -apple-system, sans-serif;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* ============================================================
+       INNER LAYOUT
+    ============================================================ */
+    .chapter-inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2.5rem 1.5rem 2rem;
+      max-width: 680px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .chapter-eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-family: system-ui, -apple-system, sans-serif;
+      opacity: 0.45;
+      margin-bottom: 0.6rem;
+    }
+
+    .chapter-title {
+      font-size: 1.4rem;
+      font-weight: bold;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.75rem;
+      line-height: 1.2;
+    }
+
+    .chapter-body {
+      font-size: 0.98rem;
+      line-height: 1.75;
+    }
+
+    .chapter-body p + p {
+      margin-top: 1rem;
+    }
+
+    /* ============================================================
+       PENNY'S QUOTES — third distinct style
+    ============================================================ */
+    .penny-quote {
+      color: #c9a84c;
+      font-style: italic;
+      font-size: 1.08rem;
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+      position: relative;
+      padding-left: 0;
+    }
+
+    .penny-quote .attribution {
+      display: block;
+      margin-top: 0.6rem;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      opacity: 0.8;
+      font-style: normal;
+    }
+
+    /* ============================================================
+       LESSON BOXES
+    ============================================================ */
+    .lesson-box {
+      border-left: 3px solid;
+      padding: 0.7rem 0.9rem 0.7rem 1rem;
+      margin: 1.25rem 0;
+      font-size: 0.875rem;
+      line-height: 1.65;
+    }
+
+    .lesson-label {
+      display: block;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-family: system-ui, -apple-system, sans-serif;
+      margin-bottom: 0.4rem;
+      opacity: 0.6;
+    }
+
+    /* ============================================================
+       DECISION BUTTONS
+    ============================================================ */
+    .choices {
+      margin-top: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+
+    .choice-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.8rem 1rem;
+      font-size: 0.92rem;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+      line-height: 1.4;
+    }
+
+    .choice-btn:hover,
+    .choice-btn:focus {
+      outline: none;
+      transform: translateX(4px);
+    }
+
+    .choice-btn:active {
+      opacity: 0.75;
+    }
+
+    /* ============================================================
+       DEAD-END SCREENS
+    ============================================================ */
+    .deadend-footer {
+      margin-top: 1.75rem;
+    }
+
+    .deadend-progress-track {
+      height: 2px;
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .deadend-progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 1px;
+    }
+
+    .deadend-skip {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      opacity: 0.4;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: none;
+      border: none;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: opacity 0.15s ease;
+    }
+
+    .deadend-skip:hover {
+      opacity: 0.7;
+    }
+
+    /* ============================================================
+       DATA TERMINAL ELEMENTS (Act II)
+    ============================================================ */
+    .data-terminal {
+      font-family: 'Courier New', 'Courier', monospace;
+      font-size: 0.82rem;
+      line-height: 2;
+      padding: 0.75rem 0;
+      margin-bottom: 1rem;
+    }
+
+    .data-terminal .data-zero {
+      opacity: 0.5;
+    }
+
+    .blink-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 0.9em;
+      background: currentColor;
+      vertical-align: text-bottom;
+      margin-left: 1px;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ============================================================
+       FINAL SCREEN ELEMENTS
+    ============================================================ */
+    .final-line {
+      font-size: 1.05rem;
+      font-style: italic;
+      line-height: 1.7;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid;
+    }
+
+    .final-actions {
+      margin-top: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .share-btn {
+      padding: 0.65rem 1.25rem;
+      font-size: 0.78rem;
+      cursor: pointer;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: none;
+      font-family: system-ui, -apple-system, sans-serif;
+      transition: opacity 0.15s ease;
+    }
+
+    .share-btn:hover {
+      opacity: 0.8;
+    }
+
+    .restart-btn {
+      font-size: 0.78rem;
+      cursor: pointer;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: none;
+      border: none;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      opacity: 0.4;
+      transition: opacity 0.15s ease;
+    }
+
+    .restart-btn:hover {
+      opacity: 0.7;
+    }
+
+    .provenance-line {
+      margin-top: 1.5rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      font-family: system-ui, -apple-system, sans-serif;
+      opacity: 0.35;
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       ACT I — THE FIELD: Warm amber, sepia, parchment
+    ============================================================ */
+    .act-1 {
+      background-color: #f2deb4;
+      background-image:
+        radial-gradient(ellipse at 15% 60%, rgba(160, 100, 40, 0.12) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 25%, rgba(180, 130, 60, 0.08) 0%, transparent 45%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      color: #2b1a0e;
+      font-family: Georgia, 'Times New Roman', 'Times', serif;
+    }
+
+    .act-1 .act-badge { color: #5c3d20; }
+    .act-1 .chapter-eyebrow { color: #7a5030; }
+    .act-1 .chapter-title { color: #2b1a0e; }
+    .act-1 .chapter-body { color: #3a2410; }
+
+    .act-1 .lesson-box {
+      border-left-color: #9b6e35;
+      background: rgba(155, 110, 53, 0.09);
+      color: #4a3018;
+    }
+
+    .act-1 .choice-btn {
+      background-color: #2b1a0e;
+      color: #f2deb4;
+      font-family: Georgia, serif;
+    }
+
+    .act-1 .choice-btn:hover {
+      background-color: #4a2e18;
+    }
+
+    .act-1 .deadend-progress-track { background: rgba(43, 26, 14, 0.12); }
+    .act-1 .deadend-progress-fill { background: #9b6e35; }
+    .act-1 .deadend-skip { color: #2b1a0e; }
+
+    .act-1 .final-line { border-top-color: rgba(43, 26, 14, 0.2); }
+    .act-1 .share-btn { background: #2b1a0e; color: #f2deb4; }
+    .act-1 .restart-btn { color: #2b1a0e; }
+    .act-1 .provenance-line { color: #2b1a0e; }
+
+    /* ============================================================
+       ACT II — THE PLATFORM: Cold, dark, terminal
+    ============================================================ */
+    .act-2 {
+      background-color: #0a0a0a;
+      color: #c2ccd6;
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+
+    .act-2 .act-badge { color: #2a4555; }
+    .act-2 .chapter-eyebrow { color: #2a4555; }
+    .act-2 .chapter-title { color: #c2ccd6; font-weight: 400; font-size: 1.2rem; letter-spacing: 0.04em; }
+    .act-2 .chapter-body { color: #8a9aaa; }
+
+    .act-2 .penny-quote { color: #c9a84c; }
+
+    .act-2 .lesson-box {
+      border-left-color: #1a3545;
+      background: rgba(26, 53, 69, 0.3);
+      color: #6a8090;
+    }
+
+    .act-2 .choice-btn {
+      background: #0d1a22;
+      color: #6ab0cc;
+      border: 1px solid #1a3040;
+      font-family: system-ui, sans-serif;
+    }
+
+    .act-2 .choice-btn:hover {
+      background: #122535;
+      border-color: #254860;
+      color: #8ac8e0;
+    }
+
+    .act-2 .data-terminal { color: #6ab0cc; }
+
+    .act-2 .deadend-progress-track { background: rgba(194, 204, 214, 0.1); }
+    .act-2 .deadend-progress-fill { background: #254860; }
+    .act-2 .deadend-skip { color: #3a6070; }
+
+    .act-2 .final-line { border-top-color: rgba(194, 204, 214, 0.12); color: #6a8090; }
+    .act-2 .share-btn { background: #142535; color: #6ab0cc; }
+    .act-2 .restart-btn { color: #3a6070; }
+    .act-2 .provenance-line { color: #3a5060; }
+
+    /* ============================================================
+       ACT III — THE EXIT: Open, light, clean
+    ============================================================ */
+    .act-3 {
+      background-color: #f8f8f5;
+      color: #1a1a18;
+      font-family: Georgia, 'Times New Roman', 'Times', serif;
+    }
+
+    .act-3 .act-badge { color: #999; }
+    .act-3 .chapter-eyebrow { color: #aaa; }
+    .act-3 .chapter-title { color: #1a1a18; font-weight: 400; font-size: 1.5rem; letter-spacing: 0.04em; }
+    .act-3 .chapter-body { color: #333330; }
+
+    .act-3 .lesson-box {
+      border-left-color: #ccc;
+      background: transparent;
+      color: #555550;
+    }
+
+    .act-3 .choice-btn {
+      background: transparent;
+      color: #1a1a18;
+      border: 1px solid #ccc;
+      font-family: Georgia, serif;
+    }
+
+    .act-3 .choice-btn:hover {
+      border-color: #888;
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .act-3 .deadend-progress-track { background: rgba(0, 0, 0, 0.08); }
+    .act-3 .deadend-progress-fill { background: #999; }
+    .act-3 .deadend-skip { color: #888; }
+
+    .act-3 .final-line { border-top-color: #ddd; color: #333; }
+    .act-3 .share-btn { background: #1a1a18; color: #f8f8f5; }
+    .act-3 .restart-btn { color: #888; }
+    .act-3 .provenance-line { color: #aaa; }
+
+    /* ============================================================
+       TOAST NOTIFICATION
+    ============================================================ */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: #1a1a18;
+      color: #f8f8f5;
+      padding: 0.55rem 1.1rem;
+      font-size: 0.75rem;
+      font-family: system-ui, -apple-system, sans-serif;
+      letter-spacing: 0.06em;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (min-width: 600px) {
+      .chapter-inner {
+        padding: 3rem 2rem 2.5rem;
+      }
+      .chapter-title {
+        font-size: 1.65rem;
+      }
+      .penny-quote {
+        font-size: 1.15rem;
+      }
+      .chapter-body {
+        font-size: 1rem;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .chapter-inner {
+        padding: 4rem 3rem 3rem;
+      }
+      .chapter-title {
+        font-size: 1.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="toast"></div>
+
+<script>
+// ============================================================
+// CHAPTER DEFINITIONS
+// ============================================================
+
+const CHAPTERS = {
+
+  ch1: {
+    id: 'ch1',
+    act: 'ACT I',
+    actClass: 'act-1',
+    title: 'ARRIVAL',
+    render: () => `
+      <div class="penny-quote">
+        "From unpaid agricultural workers who yielded cotton for farmers to unpaid site users who yield content for platformers."
+        <span class="attribution">— Penny Wrenn</span>
+      </div>
+      <div class="chapter-body">
+        <p>You have arrived. You didn't choose to be here. The land belongs to someone else. The crop belongs to someone else. What you produce today will build a fortune — just not yours.</p>
+      </div>
+    `,
+    choices: [
+      { text: 'Work the row.', next: 'ch2' },
+      { text: 'Look for the way out.', next: 'ch1a' }
+    ]
+  },
+
+  ch1a: {
+    id: 'ch1a',
+    act: 'ACT I',
+    actClass: 'act-1',
+    title: 'THE FENCE',
+    deadEnd: true,
+    deadEndReturn: 'ch1',
+    render: () => `
+      <div class="chapter-body">
+        <p>The fence is real. The gate is locked. The exit requires something you don't yet have. Come back when you know what it is.</p>
+      </div>
+    `
+  },
+
+  ch2: {
+    id: 'ch2',
+    act: 'ACT I',
+    actClass: 'act-1',
+    title: 'THE HARVEST',
+    render: () => `
+      <div class="penny-quote">
+        "Getting things done cheaply in a way that benefits you and actively burdens another."
+        <span class="attribution">— Penny Wrenn</span>
+      </div>
+      <div class="chapter-body">
+        <p>Your labor produces $47 in value today. You receive nothing. The farmer calls this "the system." You call it by another name.</p>
+      </div>
+      <div class="lesson-box">
+        <span class="lesson-label">Lesson</span>
+        The cotton economy ran on what economists call "externalizing costs" — meaning, someone else pays. In this case: you.
+      </div>
+    `,
+    choices: [
+      { text: 'Keep working. It\'s what everyone does.', next: 'ch3' },
+      { text: 'Ask why.', next: 'ch2a' }
+    ]
+  },
+
+  ch2a: {
+    id: 'ch2a',
+    act: 'ACT I',
+    actClass: 'act-1',
+    title: 'THE ANSWER',
+    deadEnd: true,
+    deadEndReturn: 'ch3',
+    render: () => `
+      <div class="chapter-body">
+        <p>There is no one here who will answer. The people who built this system are not in the field. They are in the house.</p>
+      </div>
+    `
+  },
+
+  ch3: {
+    id: 'ch3',
+    act: 'ACT I',
+    actClass: 'act-1',
+    title: 'THE COTTON GIN',
+    render: () => `
+      <div class="penny-quote">
+        "AI is the cotton gin of writing, however, in the same way that we don't even remember the commercials of 'the touch the field of cotton is the fabric of our lives' we also won't understand the price of content."
+        <span class="attribution">— Penny Wrenn</span>
+      </div>
+      <div class="chapter-body">
+        <p>A machine arrives. The field is still full. The machine is faster.</p>
+        <p>A machine now does part of your work. The owner keeps the efficiency gains. Your labor becomes less visible — which means less valued. Which means easier to deny.</p>
+      </div>
+      <div class="lesson-box">
+        <span class="lesson-label">Lesson</span>
+        Each labor revolution — cotton gin, industrial loom, AI content generator — reduces the visibility of the human worker while increasing the owner's profit. Invisibility is the mechanism.
+      </div>
+    `,
+    choices: [
+      { text: 'The machine changes nothing. I\'m still here.', next: 'ch4' },
+      { text: 'Maybe now I\'m free.', next: 'ch3a' }
+    ]
+  },
+
+  ch3a: {
+    id: 'ch3a',
+    act: 'ACT I',
+    actClass: 'act-1',
+    title: 'THE ILLUSION',
+    deadEnd: true,
+    deadEndReturn: 'ch4',
+    render: () => `
+      <div class="chapter-body">
+        <p>The machine freed the owner from needing you in the field. It did not free you from needing to work. Freedom of movement is not freedom from extraction. You will find the same system waiting in a different building.</p>
+      </div>
+    `
+  },
+
+  ch4: {
+    id: 'ch4',
+    act: 'ACT II',
+    actClass: 'act-2',
+    title: 'THE FEED',
+    render: () => `
+      <div class="penny-quote">
+        "The American populous itself is the most valuable resource in this country. That's why the American constitution starts that way."
+        <span class="attribution">— Penny Wrenn</span>
+      </div>
+      <div class="chapter-body">
+        <p>Welcome. You are free to post here. It costs nothing. This is a gift — a public square, they say. But notice: what you post here becomes theirs. Your attention is the product being sold. Your creativity is the inventory.</p>
+      </div>
+      <div class="lesson-box">
+        <span class="lesson-label">Lesson</span>
+        Section 230 of the Communications Decency Act shields platforms from the editorial responsibilities that publishers face — while platforms profit from publishing. This is the legal mechanism of free labor in the digital age.
+      </div>
+    `,
+    choices: [
+      { text: 'Post something.', next: 'ch5' },
+      { text: 'Wait. Whose platform is this?', next: 'ch4a' }
+    ]
+  },
+
+  ch4a: {
+    id: 'ch4a',
+    act: 'ACT II',
+    actClass: 'act-2',
+    title: 'ICANN',
+    deadEnd: true,
+    deadEndReturn: 'ch5',
+    render: () => `
+      <div class="penny-quote">
+        "ICANN is like the United Nations of our digital environment, which we now really think of as synonymous with our real environment, yet we have no idea about the political infrastructure of our digital world."
+        <span class="attribution">— Penny Wrenn</span>
+      </div>
+      <div class="chapter-body">
+        <p>You lease your domain. You lease your audience. You lease your presence. You thought you owned something here. You rented it.</p>
+      </div>
+    `
+  },
+
+  ch5: {
+    id: 'ch5',
+    act: 'ACT II',
+    actClass: 'act-2',
+    title: 'THE VALUE',
+    render: () => `
+      <div class="penny-quote">
+        "The entire tech economy, content economy, influencer economy has been built on the backs of users — unpaid users and user generated content."
+        <span class="attribution">— Penny Wrenn</span>
+      </div>
+      <div class="chapter-body">
+        <div class="data-terminal">
+          IMPRESSIONS GENERATED&nbsp;&nbsp;&nbsp;12,000<br>
+          PLATFORM AD REVENUE&nbsp;&nbsp;&nbsp;&nbsp;$340.00<br>
+          YOUR SHARE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="data-zero">$0.00</span><span class="blink-cursor"></span>
+        </div>
+        <p>This is not a mistake. This is the business model.</p>
+      </div>
+      <div class="lesson-box">
+        <span class="lesson-label">Lesson</span>
+        "Content moderators... are not the same as editors. They are trying not to do what actually is the best practice when it comes to media, and doing that as a willfully negligent approach to keep them from liability." — Penny Wrenn
+      </div>
+    `,
+    choices: [
+      { text: 'Keep posting. Everyone does.', next: 'ch6' },
+      { text: 'Delete it. Take it back.', next: 'ch5a' }
+    ]
+  },
+
+  ch5a: {
+    id: 'ch5a',
+    act: 'ACT II',
+    actClass: 'act-2',
+    title: 'THE LOSS',
+    deadEnd: true,
+    deadEndReturn: 'ch6',
+    render: () => `
+      <div class="chapter-body">
+        <p>You delete your post. But the data was already harvested. The model was already trained on it. The impressions were already sold. You cannot take back what has already been extracted.</p>
+        <p>You can stop giving more. But yesterday's labor is gone.</p>
+      </div>
+    `
+  },
+
+  ch6: {
+    id: 'ch6',
+    act: 'ACT II',
+    actClass: 'act-2',
+    title: 'THE SHUTDOWN',
+    render: () => `
+      <div class="penny-quote">
+        "That's the whole point of 'from cotton to content.' It's the value of 'We the People.'"
+        <span class="attribution">— Penny Wrenn, January 21, 2025</span>
+      </div>
+      <div class="chapter-body">
+        <p>January 2025. TikTok goes dark for American users.</p>
+        <p>When American users disappeared, the platform went dark. Not for them — <em>because of them.</em> This is the empirical proof. You are not the audience. You are the engine.</p>
+      </div>
+      <div class="lesson-box">
+        <span class="lesson-label">Lesson</span>
+        The TikTok shutdown moment is the argument made visible: when "We the People" stop laboring for the platform, the platform stops.
+      </div>
+    `,
+    choices: [
+      { text: 'I see it now. What do I do?', next: 'ch7' },
+      { text: 'It came back. Nothing changed.', next: 'ch6a' }
+    ]
+  },
+
+  ch6a: {
+    id: 'ch6a',
+    act: 'ACT II',
+    actClass: 'act-2',
+    title: 'THE RETURN',
+    deadEnd: true,
+    deadEndReturn: 'ch7',
+    render: () => `
+      <div class="chapter-body">
+        <p>Yes. It came back. Because the labor was too valuable to lose. Which proves the point.</p>
+      </div>
+    `
+  },
+
+  ch7: {
+    id: 'ch7',
+    act: 'ACT III',
+    actClass: 'act-3',
+    title: 'THE 250TH',
+    render: () => `
+      <div class="penny-quote">
+        "Next year is our 250th. We the People = unslaved, unchained workforce more than anything. The unpaid labor economy has evolved from cotton to content."
+        <span class="attribution">— Penny Wrenn</span>
+      </div>
+      <div class="chapter-body">
+        <p>A timeline: 1776 &rarr; 1865 &rarr; 1964 &rarr; 2026. Each date marked with what changed for labor. Each date marked with what didn't.</p>
+        <p>At the founding, the Constitution deferred the free labor problem. At Emancipation, the legal form changed but the economic extraction continued in sharecropping. At the Civil Rights Act, workplace discrimination became illegal — but the standard of proof was set so high that "unless you have a noose around your neck, lawyers will tell you it's not worth fighting." (Penny Wrenn)</p>
+        <p>Now: 250 years in. The extraction continues in a new form. What do you do with that knowledge?</p>
+      </div>
+    `,
+    choices: [
+      { text: 'Reclaim: Take your content, build what you own.', next: 'ch8' },
+      { text: 'Resist: Advocate. Reform Section 230. Demand the fiduciary standard.', next: 'ch9' },
+      { text: 'Remain: Nothing I do matters.', next: 'ch10' }
+    ]
+  },
+
+  ch8: {
+    id: 'ch8',
+    act: 'ACT III',
+    actClass: 'act-3',
+    title: 'OWN IT',
+    isFinal: true,
+    render: () => `
+      <div class="penny-quote">
+        "We are a collective workforce. We need to bring cases that are more aligned with that fiduciary duty that an employer has to an employee."
+        <span class="attribution">— Penny Wrenn</span>
+      </div>
+      <div class="chapter-body">
+        <p>The exit from extraction is ownership. Over the next 2–3 years: remove your content from platforms you don't control. Publish on infrastructure you own. Your domain, your archive, your terms.</p>
+      </div>
+      <div class="lesson-box">
+        <span class="lesson-label">What you learn</span>
+        The exit is not dramatic. It's administrative. It requires time and intentionality. But it is the only way your labor builds for you instead of for them.
+      </div>
+      <div class="final-line">
+        "From cotton fields to content farms — and now: from content farms back to your own land."
+      </div>
+    `
+  },
+
+  ch9: {
+    id: 'ch9',
+    act: 'ACT III',
+    actClass: 'act-3',
+    title: 'FIGHT IT',
+    isFinal: true,
+    render: () => `
+      <div class="penny-quote">
+        "This is no longer about race, right? This is just about quote, we the people."
+        <span class="attribution">— Penny Wrenn</span>
+      </div>
+      <div class="chapter-body">
+        <p>The legal framework exists to be updated. Section 230 can be reformed. Fiduciary duties can be extended. A new category of labor — digital labor — can be recognized and protected. But only if the workers know they are workers.</p>
+      </div>
+      <div class="lesson-box">
+        <span class="lesson-label">What you learn</span>
+        The constitutional argument is available. The 250th anniversary is the occasion. The coalition is "We the People" — not one group, every group whose labor has been extracted without compensation.
+      </div>
+      <div class="final-line">
+        "The argument isn't new. The proof is in the record."
+      </div>
+    `
+  },
+
+  ch10: {
+    id: 'ch10',
+    act: 'ACT III',
+    actClass: 'act-3',
+    title: 'THE COST OF REMAINING',
+    isFinal: true,
+    render: () => `
+      <div class="penny-quote">
+        "If all of these forces shut down today, they would lose it. We wouldn't have access to it anymore."
+        <span class="attribution">— Penny Wrenn</span>
+      </div>
+      <div class="chapter-body">
+        <p>You remain. Your content remains on their servers. Your data trains their models. Your attention is sold to their advertisers. When they decide to close, shut down, pivot, or sell — you lose everything you built on their land.</p>
+        <p>This is the cost of remaining. It is not charged until it is too late.</p>
+      </div>
+      <div class="lesson-box">
+        <span class="lesson-label">What you learn</span>
+        Sharecroppers didn't choose to sharecrop. But you have a choice they didn't have. The exit is hard. The cost of not taking it is total.
+      </div>
+      <div class="final-line">
+        "The field is still there. The question is whose."
+      </div>
+    `
+  }
+
+};
+
+// ============================================================
+// NAVIGATION ENGINE
+// ============================================================
+
+let deadEndTimer = null;
+
+function showChapter(id) {
+  if (deadEndTimer) {
+    clearTimeout(deadEndTimer);
+    deadEndTimer = null;
+  }
+
+  const chapter = CHAPTERS[id];
+  if (!chapter) {
+    console.error('Chapter not found:', id);
+    return;
+  }
+
+  const app = document.getElementById('app');
+  const existing = app.querySelector('.chapter.active');
+
+  const html = buildChapterHTML(chapter);
+
+  function mountChapter() {
+    app.innerHTML = html;
+    window.scrollTo(0, 0);
+
+    const el = app.querySelector('.chapter');
+    el.classList.add('active');
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.classList.add('visible');
+      });
+    });
+
+    bindEvents(chapter);
+  }
+
+  if (existing) {
+    existing.classList.remove('visible');
+    setTimeout(mountChapter, 310);
+  } else {
+    mountChapter();
+  }
+}
+
+function buildChapterHTML(chapter) {
+  const body = chapter.render();
+  const footer = buildFooter(chapter);
+
+  return `
+    <div class="chapter ${chapter.actClass}" id="screen-${chapter.id}" role="main">
+      <div class="act-badge">${chapter.act}</div>
+      <div class="chapter-inner">
+        <div class="chapter-eyebrow">${chapter.title}</div>
+        ${body}
+        ${footer}
+      </div>
+    </div>
+  `;
+}
+
+function buildFooter(chapter) {
+  if (chapter.isFinal) {
+    return `
+      <div class="final-actions">
+        <button class="share-btn" id="js-share">Share this</button>
+        <button class="restart-btn" id="js-restart">Start over</button>
+      </div>
+      <div class="provenance-line">
+        Coined: 2022 &nbsp;|&nbsp; Claimed: February 24, 2025 &nbsp;|&nbsp; &copy; Penny Wrenn &nbsp;|&nbsp; PW-C2C-2022-ORIGIN
+      </div>
+    `;
+  }
+
+  if (chapter.deadEnd) {
+    return `
+      <div class="deadend-footer">
+        <div class="deadend-progress-track">
+          <div class="deadend-progress-fill" id="js-progress"></div>
+        </div>
+        <button class="deadend-skip" id="js-skip">Continue</button>
+      </div>
+    `;
+  }
+
+  if (chapter.choices && chapter.choices.length) {
+    const buttons = chapter.choices
+      .map(c => `<button class="choice-btn" data-next="${c.next}">${c.text}</button>`)
+      .join('');
+    return `<div class="choices">${buttons}</div>`;
+  }
+
+  return '';
+}
+
+function bindEvents(chapter) {
+  // Choice buttons
+  document.querySelectorAll('.choice-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = btn.getAttribute('data-next');
+      if (next) showChapter(next);
+    });
+  });
+
+  // Dead-end auto-advance
+  if (chapter.deadEnd && chapter.deadEndReturn) {
+    const fill = document.getElementById('js-progress');
+    const skip = document.getElementById('js-skip');
+    const dest = chapter.deadEndReturn;
+    const advance = () => showChapter(dest);
+
+    if (fill) {
+      // Trigger CSS transition on next paint
+      requestAnimationFrame(() => {
+        fill.style.transition = 'width 4.5s linear';
+        fill.style.width = '100%';
+      });
+    }
+
+    deadEndTimer = setTimeout(advance, 4500);
+
+    if (skip) {
+      skip.addEventListener('click', () => {
+        if (deadEndTimer) { clearTimeout(deadEndTimer); deadEndTimer = null; }
+        advance();
+      });
+    }
+  }
+
+  // Final screen: share
+  const shareBtn = document.getElementById('js-share');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', () => {
+      const url = 'https://pennywrenn.media/cotton-to-content';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url)
+          .then(() => toast('URL copied to clipboard'))
+          .catch(() => fallbackCopy(url));
+      } else {
+        fallbackCopy(url);
+      }
+    });
+  }
+
+  // Final screen: restart
+  const restartBtn = document.getElementById('js-restart');
+  if (restartBtn) {
+    restartBtn.addEventListener('click', () => showChapter('ch1'));
+  }
+}
+
+function fallbackCopy(text) {
+  try {
+    const el = document.createElement('textarea');
+    el.value = text;
+    el.style.position = 'fixed';
+    el.style.opacity = '0';
+    document.body.appendChild(el);
+    el.focus();
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    toast('URL copied to clipboard');
+  } catch (e) {
+    toast('Copy: https://pennywrenn.media/cotton-to-content');
+  }
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+showChapter('ch1');
+</script>
+</body>
+</html>
